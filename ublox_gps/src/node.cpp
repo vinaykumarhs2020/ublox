@@ -512,7 +512,14 @@ void UbloxNode::initializeIo() {
       throw std::runtime_error("Protocol '" + proto + "' is unsupported");
     }
   } else {
-    gps.initializeSerial(device_, baudrate_, uart_in_, uart_out_);
+    gps.initializeSerial(device_, baudrate_, uart_in_, uart_out_,
+      boost::bind(&UbloxNode::portErrorExitCheck, this, _1));
+  }
+}
+
+void UbloxNode::portErrorExitCheck(const bool& exit){
+  if(exit){
+    ROS_ERROR("Received exit signal because of serial port issue. Please check connection");
   }
 }
 

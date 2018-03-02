@@ -519,6 +519,12 @@ class UbloxNode : public virtual ComponentInterface {
    */
   void printInf(const ublox_msgs::Inf &m, uint8_t id);
 
+  /**
+   * @brief Function to check port issues
+   * @param exit bool flag to terminate ROS
+   */
+  void portErrorExitCheck(const bool& exit);
+
  private:
 
   /**

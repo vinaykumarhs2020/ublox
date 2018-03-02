@@ -53,10 +53,22 @@ class AsyncWorker : public Worker {
   typedef boost::mutex Mutex;
   typedef boost::mutex::scoped_lock ScopedLock;
 
+  // callback to report port related issues
+  boost::function<void(std::string)> port_issue_callback_;
+
+  /**
+   * @brief Set port issue callback
+   * @param callback port issue callback
+   */
+  void setPortIssueCallback(const boost::function<void(std::string)> cb){
+    port_issue_callback_ = cb;
+  }
+
   /**
    * @brief Construct an Asynchronous I/O worker.
    * @param stream the stream for th I/O service
    * @param io_service the I/O service
+   * @param callback callback to report port related issues
    * @param buffer_size the size of the input and output buffers
    */
   AsyncWorker(boost::shared_ptr<StreamT> stream,
@@ -212,6 +224,9 @@ void AsyncWorker<StreamT>::readEnd(const boost::system::error_code& error,
     ROS_ERROR("U-Blox ASIO input buffer read error: %s, %li",
               error.message().c_str(),
               bytes_transfered);
+    // Call the port issue callback
+    if(port_issue_callback_)
+      port_issue_callback_(error.message());
   } else if (bytes_transfered > 0) {
     in_buffer_size_ += bytes_transfered;
 

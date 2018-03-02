@@ -14,9 +14,9 @@
 //       endorse or promote products derived from this software without
 //       specific prior written permission.
 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 // ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
@@ -49,12 +49,18 @@ class Worker {
   virtual void setCallback(const Callback& callback) = 0;
 
   /**
+   * @brief Set port issue callback
+   * @param callback port issue callback
+   */
+  virtual void setPortIssueCallback(const boost::function<void(std::string)> cb) = 0;
+
+  /**
    * @brief Send the data in the buffer.
    * @param data the bytes to send
    * @param size the size of the buffer
    */
   virtual bool send(const unsigned char* data, const unsigned int size) = 0;
-  
+
   /**
    * @brief Wait for an incoming message.
    * @param timeout the maximum time to wait.

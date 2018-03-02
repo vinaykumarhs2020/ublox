@@ -74,6 +74,9 @@ class Gps {
   //! Size of write buffer for output messages
   constexpr static int kWriterSize = 1024;
 
+  // Exit callback
+  boost::function<void(const bool&)> exit_callback;
+
   Gps();
   virtual ~Gps();
 
@@ -98,9 +101,17 @@ class Gps {
    * @param baudrate the desired baud rate of the port
    * @param uart_in the UART In protocol, see CfgPRT for options
    * @param uart_out the UART Out protocol, see CfgPRT for options
+   * @param exit_callback callback function to report port issues
    */
   void initializeSerial(std::string port, unsigned int baudrate,
-                        uint16_t uart_in, uint16_t uart_out);
+                        uint16_t uart_in, uint16_t uart_out,
+                        boost::function<void(const bool&)> exit_callback);
+
+  /**
+   * @brief Report worker issue related to serial port
+   * @param message detail about the worker situation
+   */
+  void workerPortIssueCallback(std::string message);
 
   /**
    * @brief Reset the Serial I/O port after u-blox reset.

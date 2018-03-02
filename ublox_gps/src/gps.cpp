@@ -46,6 +46,8 @@ void Gps::setWorker(const boost::shared_ptr<Worker>& worker) {
   worker_ = worker;
   worker_->setCallback(boost::bind(&CallbackHandlers::readCallback,
                                    &callbacks_, _1, _2));
+  // Set port issue callbacks_
+  worker_->setPortIssueCallback(boost::bind(&Gps::workerPortIssueCallback, this, _1));
   configured_ = static_cast<bool>(worker);
 }
 
@@ -100,7 +102,8 @@ void Gps::processUpdSosAck(const ublox_msgs::UpdSOS_Ack &m) {
 }
 
 void Gps::initializeSerial(std::string port, unsigned int baudrate,
-                           uint16_t uart_in, uint16_t uart_out) {
+                           uint16_t uart_in, uint16_t uart_out,
+                           boost::function<void(const bool&)> exit_callback) {
   port_ = port;
   boost::shared_ptr<boost::asio::io_service> io_service(
       new boost::asio::io_service);
@@ -157,6 +160,12 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
   if(!configured_ || current_baudrate.value() != baudrate) {
     throw std::runtime_error("Could not configure serial baud rate");
   }
+}
+
+void Gps::workerPortIssueCallback(std::string message){
+  // Report message
+  ROS_ERROR("Issue related to serial port reading: %s", message.c_str());
+
 }
 
 void Gps::resetSerial(std::string port) {
