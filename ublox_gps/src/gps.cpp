@@ -103,13 +103,13 @@ void Gps::processUpdSosAck(const ublox_msgs::UpdSOS_Ack &m) {
 
 void Gps::initializeSerial(std::string port, unsigned int baudrate,
                            uint16_t uart_in, uint16_t uart_out,
-                           boost::function<void(const bool&)> exit_callback) {
+                           boost::function<void(const bool&)> callback) {
   port_ = port;
   boost::shared_ptr<boost::asio::io_service> io_service(
       new boost::asio::io_service);
   boost::shared_ptr<boost::asio::serial_port> serial(
       new boost::asio::serial_port(*io_service));
-
+  exit_callback = callback;
   // open serial port
   try {
     serial->open(port);
@@ -164,8 +164,11 @@ void Gps::initializeSerial(std::string port, unsigned int baudrate,
 
 void Gps::workerPortIssueCallback(std::string message){
   // Report message
-  ROS_ERROR("Issue related to serial port reading: %s", message.c_str());
-
+  ROS_ERROR("U-Blox Issue related to serial port reading: %s", message.c_str());
+  if(message.compare("End of file") == 0){
+    ROS_FATAL("U-Blox Serial port disconnected. Please reconnect and Start the driver");
+    exit_callback(true);
+  }
 }
 
 void Gps::resetSerial(std::string port) {

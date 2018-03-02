@@ -519,7 +519,8 @@ void UbloxNode::initializeIo() {
 
 void UbloxNode::portErrorExitCheck(const bool& exit){
   if(exit){
-    ROS_ERROR("Received exit signal because of serial port issue. Please check connection");
+    ROS_FATAL("U-Blox Received exit signal because of serial port issue. Please check connection");
+    ros::shutdown();
   }
 }
 
